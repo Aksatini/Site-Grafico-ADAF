@@ -3,1256 +3,535 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Indicadores Semestrais — GDA/GFA</title>
+  <title>Relatório Semestral — GDA (Mock)</title>
   <style>
     :root{
-      --bg:#fff;
+      --bg:#ffffff;
       --text:#0f172a;
-      --muted:#64748b;
+      --muted:#475569;
       --border:#e2e8f0;
       --panel:#f8fafc;
-      --a:#2563eb;       /* Série A */
-      --b:#16a34a;       /* Série B */
-      --c:#f59e0b;       /* Executado (sem planejado) */
-      --shadow: 0 10px 30px rgba(2,6,23,.06);
+      --shadow: 0 10px 30px rgba(2,6,23,.08);
       --r:16px;
-      --font: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+
+      --planned:#1d4ed8;
+      --executed:#16a34a;
+      --grid:#e8eef7;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)}
-    .wrap{max-width:1150px;margin:26px auto;padding:0 18px 30px}
-    header{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
-    h1{margin:0;font-size:20px;letter-spacing:-.02em}
-    .sub{margin:6px 0 0;color:var(--muted);font-size:13px}
-    .controls{display:flex;gap:10px;flex-wrap:wrap}
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--font);
+      line-height:1.35;
+    }
+
+    .wrap{
+      max-width: 1240px;
+      margin: 28px auto;
+      padding: 0 18px 34px;
+    }
+
+    header{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-end;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
+    }
+
+    h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:-0.02em;
+    }
+    .sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size: 14px;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
     .ctl{
-      border:1px solid var(--border); border-radius:12px; padding:10px 12px; background:#fff;
+      border:1px solid var(--border);
+      border-radius: 12px;
+      background:#fff;
       box-shadow: 0 1px 0 rgba(2,6,23,.02);
-      display:flex; gap:8px; align-items:center; font-size:13px;
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height: 44px;
     }
-    .ctl label{color:var(--muted);font-size:12px}
-    select{border:none;outline:none;font:inherit;background:transparent;cursor:pointer;max-width:420px}
-    .grid{display:grid;grid-template-columns: 1fr; gap:14px}
-    .card{border:1px solid var(--border);border-radius:var(--r);background:#fff;box-shadow:var(--shadow)}
-    .card-h{padding:14px 16px 0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .card-h h2{margin:0;font-size:14px}
-    .card-h p{margin:4px 0 0;color:var(--muted);font-size:12px}
-    .content{padding:10px 16px 16px}
-    .chart-wrap{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,var(--panel));padding:12px}
-    .legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:0 0 8px;align-items:center}
-    .key{display:flex;gap:8px;align-items:center}
-    .sw{width:14px;height:10px;border-radius:4px;background:var(--a)}
-    .sw.b{background:var(--b)}
-    .sw.c{background:var(--c)}
-    svg{width:100%;height:auto;display:block}
-    .axis text{fill:var(--muted);font-size:11px}
-    .gridline{stroke:#e8eef7;stroke-width:1}
-    .barA{fill:var(--a)}
-    .barB{fill:var(--b)}
-    .barC{fill:var(--c)}
-    .sliceA{fill:var(--a)}
-    .sliceB{fill:var(--b)}
-    .sliceStroke{stroke:#fff;stroke-width:2}
-    .tooltip{
-      position:fixed; pointer-events:none; opacity:0;
-      transform: translate(-50%, calc(-100% - 12px));
-      background:#0b1220;color:#fff;padding:10px 12px;border-radius:12px;
-      font-size:12px; box-shadow:0 16px 40px rgba(0,0,0,.22); min-width:230px;
-      transition:opacity .12s ease; z-index:30;
+    .ctl label{
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
     }
-    .tooltip .t-title{font-weight:700;margin-bottom:6px}
-    .tooltip .t-row{display:flex;justify-content:space-between;gap:10px;opacity:.95}
+    select{
+      border:none;
+      outline:none;
+      font: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: transparent;
+      cursor:pointer;
+      max-width: 520px;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      background:#fff;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-h{
+      padding: 16px 16px 0;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .card-h h2{
+      margin:0;
+      font-size: 15px;
+      letter-spacing:-0.01em;
+    }
+    .card-h p{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 980px;
+    }
+
+    .pillrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin: 10px 0 0;
+    }
     .pill{
-      display:inline-flex;align-items:center;gap:6px;border-radius:999px;
-      padding:6px 10px;font-size:12px;border:1px solid var(--border);background:#fff;color:var(--muted)
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--muted);
+      background:#fff;
+      white-space: nowrap;
     }
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{padding:10px 12px;border-top:1px solid var(--border);text-align:left}
-    th{background:var(--panel);color:var(--muted);font-weight:600}
-    tbody tr:hover td{background:#fbfdff}
-    .mono{font-variant-numeric:tabular-nums}
-    @media (min-width: 980px){
-      .grid{grid-template-columns: 1.1fr .9fr}
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--planned);
+      box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+    }
+    .dot.exec{
+      background: var(--executed);
+      box-shadow: 0 0 0 3px rgba(22,163,74,.12);
+    }
+
+    .content{
+      padding: 12px 16px 16px;
+    }
+
+    /* Table ABOVE the chart */
+    .table-wrap{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td{
+      padding: 12px 12px;
+      border-top: 1px solid var(--border);
+      text-align:left;
+      vertical-align: middle;
+    }
+    thead th{
+      background: var(--panel);
+      color: var(--muted);
+      font-weight: 700;
+      border-top:none;
+      font-size: 13px;
+      letter-spacing: .01em;
+    }
+    tbody tr:hover td{ background:#fbfdff; }
+    .mono{ font-variant-numeric: tabular-nums; }
+
+    /* Chart */
+    .chart-wrap{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff, var(--panel));
+      padding: 12px;
+    }
+    .legend{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .legend-left{
+      display:flex;
+      gap: 14px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .key{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .sw{
+      width:16px;
+      height:10px;
+      border-radius: 4px;
+      background: var(--planned);
+    }
+    .sw.exec{ background: var(--executed); }
+
+    svg{ width:100%; height:auto; display:block; }
+    .gridline{ stroke: var(--grid); stroke-width: 1; }
+    .axis text{ fill: var(--muted); font-size: 12px; }
+    .barPlanned{ fill: var(--planned); }
+    .barExecuted{ fill: var(--executed); }
+    .label{ fill: var(--muted); font-size: 12px; }
+
+    /* Tooltip */
+    .tooltip{
+      position: fixed;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, calc(-100% - 12px));
+      background: #0b1220;
+      color: #fff;
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.25);
+      min-width: 260px;
+      transition: opacity .12s ease;
+      z-index: 50;
+    }
+    .tooltip .t-title{ font-weight: 800; margin-bottom: 7px; }
+    .tooltip .t-row{ display:flex; justify-content:space-between; gap:12px; opacity:.96; }
+    .tooltip .t-row b{ font-weight: 800; }
+
+    .footnote{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
       <div>
-        <h1>📊 Indicadores Semestrais — GDA/GFA</h1>
-        <p class="sub">Selecione o programa e o indicador. O gráfico muda automaticamente (barra/pizza).</p>
+        <h1>Relatório Semestral — Planejado x Executado</h1>
+        <p class="sub">Dados carregados de <span class="mono">data.js</span> (MOCK_DATA).</p>
       </div>
+
       <div class="controls">
         <div class="ctl">
-          <label for="program">Programa</label>
-          <select id="program"></select>
+          <label for="dept">Gerência</label>
+          <select id="dept"></select>
+        </div>
+        <div class="ctl">
+          <label for="group">Programa / Grupo</label>
+          <select id="group"></select>
         </div>
         <div class="ctl">
           <label for="indicator">Indicador</label>
           <select id="indicator"></select>
         </div>
-        <div class="ctl">
-          <span class="pill" id="modePill">Modo: —</span>
-        </div>
       </div>
     </header>
 
-    <div class="grid">
-      <section class="card">
-        <div class="card-h">
-          <div>
-            <h2 id="chartTitle">Gráfico</h2>
-            <p id="chartDesc">Passe o mouse nas barras/fatias para detalhes.</p>
+    <section class="card">
+      <div class="card-h">
+        <div>
+          <h2 id="title">—</h2>
+          <p id="desc">Tabela e gráfico com valores semestrais. Passe o mouse nas barras para detalhes.</p>
+          <div class="pillrow">
+            <span class="pill"><span class="dot"></span> Planejado</span>
+            <span class="pill"><span class="dot exec"></span> Executado</span>
+            <span class="pill" id="kpiInfo">Cumprimento: —</span>
           </div>
         </div>
-        <div class="content">
-          <div class="chart-wrap">
-            <div class="legend" id="legend"></div>
-            <svg id="chart" viewBox="0 0 920 360"></svg>
-          </div>
-        </div>
-      </section>
+      </div>
 
-      <aside class="card">
-        <div class="card-h">
-          <div>
-            <h2>📋 Tabela (para relatório)</h2>
-            <p>Os mesmos valores usados no gráfico.</p>
-          </div>
-        </div>
-        <div class="content">
-          <table>
+      <div class="content">
+        <div class="table-wrap">
+          <table aria-label="Tabela semestral">
             <thead>
               <tr>
                 <th>Semestre</th>
                 <th class="mono">Planejado</th>
                 <th class="mono">Executado</th>
+                <th class="mono">Cumprimento</th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
           </table>
         </div>
-      </aside>
-    </div>
+
+        <div class="chart-wrap">
+          <div class="legend">
+            <div class="legend-left">
+              <div class="key"><span class="sw"></span> Planejado</div>
+              <div class="key"><span class="sw exec"></span> Executado</div>
+            </div>
+            <div id="unitLabel" class="mono"></div>
+          </div>
+
+          <svg id="chart" viewBox="0 0 980 360" role="img" aria-label="Gráfico de barras por semestre"></svg>
+          <div class="footnote" id="foot"></div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="tooltip" id="tooltip"></div>
 
+  <!-- IMPORTANT: load your mock first -->
+  <script src="./data.js"></script>
+
   <script>
-    // ============================================================
-    // ✅ RAW_TEXT: seus dados (GDA + GFA) — o parser faz tudo sozinho
-    // ============================================================
-    const RAW_TEXT = `
-GERÊNCIA DE DEFESA ANIMAL (GDA)
+    // Expecting: const MOCK_DATA = [...]
+    if (typeof MOCK_DATA === "undefined") {
+      document.body.innerHTML = "<pre style='padding:20px'>Erro: MOCK_DATA não encontrado. Verifique se ./data.js exporta: const MOCK_DATA = [...]</pre>";
+      throw new Error("MOCK_DATA not found. Ensure data.js defines const MOCK_DATA = [...]");
+    }
 
-Vigilâncias Ativas para Febre Aftosa (PNEFA):
-1° semestre:
-        Planejado: 419
-        Executado: 419
-
-2° semestre:
-        Planejado: 419
-        Executado: 379
-----------------------------------------------------------------------------------------------------------
-
-Vigilância Clínica Pós Ocorrência do Tuberculose nos Abatedouros (PNCEBT):
-1° semestre:
-        Planejado: N/A
-        Executado: 18
-
-2° semestre:
-        Planejado: N/A
-        Executado: 6
-
-Fiscalização em Sala de Testes de Médico Veterinário Habilitado (PNCEBT):
-1° semestre:
-        Planejado: 20
-        Executado: 3
-
-2° semestre:
-        Planejado: 20
-        Executado: 5
-----------------------------------------------------------------------------------------------------------
-
-Quantidade de Interdições de Estabelecimentos ou Propriedades pecuárias p. investigação de AIE e/ou Mormo (PNSE):
-1° semestre:
-        Planejado: N/A
-        Executado: 16
-
-2° semestre:
-        Planejado: N/A
-        Executado: 5
-
-Quantidade de Envios de Amostras Biológicas a Laboratórios Oficiais (PNSE):
-1° semestre:
-        Planejado: N/A
-        Executado: 7
-
-2° semestre:
-        Planejado: N/A
-        Executado: 4
-
-Quantidade de amostras biológicas de equídeos para investigação de AIE e/ou Mormo (PNSE):
-1° semestre:
-        Planejado: N/A
-        Executado: 150
-
-2° semestre:
-        Planejado: N/A
-        Executado: 150
-
-Quantidade de Eutanásias / Sacrifícios Sanitários para Fins de Saneamento de Focos de AIE e Mormo (PNSE):
-1° semestre:
-        Planejado: N/A
-        Executado: 16
-
-2° semestre:
-        Planejado: N/A
-        Executado: 10
-
-Quantidade de equídeos testados para EXAMES OFICIAIS para AIE e Mormo (PNSE):
-1° semestre:
-        Planejado: N/A
-        Executado: 171
-
-2° semestre:
-        Planejado: N/A
-        Executado: 102
-
-Cadastro de Propriedades com Equídeos (novos e atualizações) (PNSE):
-1° semestre:
-        Planejado: 348
-        Executado: 147
-
-2° semestre:
-        Planejado: 348
-        Executado: 26
-
-Vigilâncias Ativas em Propriedades com Equídeos (PNSE):
-1° semestre:
-        Planejado: 291
-        Executado: 38
-
-2° semestre:
-        Planejado: 291
-        Executado: 5
-----------------------------------------------------------------------------------------------------------
-
-Quantidade de registros/renovação de estabelecimentos avícolas comerciais emitidos (PNSA):
-1° semestre:
-        Planejado: 0
-        Executado: 29
-
-2° semestre:
-        Planejado: 0
-        Executado: 36
-
-Quantidade de requerimentos para protocolados para registro de estabelecimento avícola (PNSA):
-1° semestre:
-        Planejado: 0
-        Executado: 12
-
-2° semestre:
-        Planejado: 0
-        Executado: 12
-
-Cadastro de estabelecimentos comercializadores de aves vivas (PNSA):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 40
-
-Quantidade de atendimentos à suspeita de Síndrome Respiratória Nervosa de Aves (SRN) (PNSA):
-1° semestre:
-        Planejado: 0
-        Executado: 8
-
-2° semestre:
-        Planejado: 0
-        Executado: 7
-----------------------------------------------------------------------------------------------------------
-
-Total de Animais Fiscalizados (PNSAA):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Número de Propriedades Cadastradas (PNSAA):
-1° semestre:
-        Planejado: 300
-        Executado: 11
-
-2° semestre:
-        Planejado: 300
-        Executado: 16
-----------------------------------------------------------------------------------------------------------
-
-Número de Vigilância Ativa (PNSAp):
-1° semestre:
-        Planejado: 288
-        Executado: 5
-
-2° semestre:
-        Planejado: 288
-        Executado: 14
-
-Número de Propriedades Fiscalizadas (PNSAp):
-1° semestre:
-        Planejado: 0
-        Executado: 5
-
-2° semestre:
-        Planejado: 0
-        Executado: 14
-
-Número de Propriedades Cadastradas (PNSAp):
-1° semestre:
-        Planejado: 288
-        Executado: 5
-
-2° semestre:
-        Planejado: 288
-        Executado: 33
-
-Número de Colmeias Cadastradas (PNSAp):
-1° semestre:
-        Planejado: 0
-        Executado: 28
-
-2° semestre:
-        Planejado: 0
-        Executado: 324
-----------------------------------------------------------------------------------------------------------
-
-Cadastros de Propriedades (PNSS):
-1° semestre:
-        Planejado: 200
-        Executado: 28
-
-2° semestre:
-        Planejado: 200
-        Executado: 324
-
-Fiscalização em Lixões (PNSS):
-1° semestre:
-        Planejado: 12
-        Executado: 80
-
-2° semestre:
-        Planejado: 12
-        Executado: 35
-
-Vigilância Clínica (nº de propriedades) (PNSS):
-1° semestre:
-        Planejado: 520
-        Executado: 132
-
-2° semestre:
-        Planejado: 520
-        Executado: 397
-
-Vigilância Clínica (nº de animais inspecionados) (PNSS):
-1° semestre:
-        Planejado: 5000
-        Executado: 309
-
-2° semestre:
-        Planejado: 5000
-        Executado: 4746
-
-Vigilância Sorológica (nº de propriedades na zl de PSC) (PNSS):
-1° semestre:
-        Planejado: 0
-        Executado: 123
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Vigilância sorológica (nº de amostras coletadas na zl de PSC) (PNSS):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-----------------------------------------------------------------------------------------------------------
-
-Número de Abrigos de Morcegos Hematófagos Cadastrados (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 4
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Número de Morcegos Hematófagos Capturados (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 54
-
-2° semestre:
-        Planejado: 0
-        Executado: 24
-
-Número de Morcegos Enviados para Laboratório (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Número de Notificações de Suspeita de Síndrome Nervosa (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 4
-
-2° semestre:
-        Planejado: 0
-        Executado: 4
-
-Número de Atendimentos à Notificações de Suspeita (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 4
-
-2° semestre:
-        Planejado: 0
-        Executado: 4
-
-Número de Coleta de Envio de Material Encefálico ao Laboratório (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 2
-
-2° semestre:
-        Planejado: 0
-        Executado: 3
-
-Número de Herbívoros Vacinados Contra Raiva (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 482511
-
-2° semestre:
-        Planejado: 0
-        Executado: 307210
-
-Número de Propriedades com Vacinação (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 4852
-
-2° semestre:
-        Planejado: 0
-        Executado: 10168
-
-Total de propriedades com utilização de pasta vampiricida (PNCRH):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Número de municípios com vacinação antirrábica obrigatória (PNCRH):
-1° semestre:
-        Planejado: 6
-        Executado: 38
-
-2° semestre:
-        Planejado: 6
-        Executado: 47
-----------------------------------------------------------------------------------------------------------
-
-Número de notificações - Sisbravet (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 31
-
-2° semestre:
-        Planejado: N/A
-        Executado: 23
-
-Número de ocorrências - Sisbravet (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 31
-
-2° semestre:
-        Planejado: N/A
-        Executado: 23
-
-Número de verificações por atendimento - Sisbravet (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 56
-
-2° semestre:
-        Planejado: N/A
-        Executado: 19
-
-Elaboração de documentos técnicos (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 26
-
-2° semestre:
-        Planejado: N/A
-        Executado: 13
-
-Solicitações de correções (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 30
-
-2° semestre:
-        Planejado: N/A
-        Executado: 9
-
-Reuniões ministradas pelo setor (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 3
-
-2° semestre:
-        Planejado: N/A
-        Executado: 1
-
-Participação em capacitações/ reuniões MAPA (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 8
-
-2° semestre:
-        Planejado: N/A
-        Executado: 4
-
-Triagem amostras (EPIDEMIOLOGIA):
-1° semestre:
-        Planejado: N/A
-        Executado: 8
-
-2° semestre:
-        Planejado: N/A
-        Executado: 5
-----------------------------------------------------------------------------------------------------------
-
-Número de Autos Emitidos (AUTOS DE INFRAÇÃO):
-1° semestre:
-        Planejado: 0
-        Executado: 309
-
-2° semestre:
-        Planejado: 0
-        Executado: 10
-
-Autos emitidos por trânsito irregular (AUTOS DE INFRAÇÃO):
-1° semestre:
-        Planejado: 0
-        Executado: 36
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Autos emitidos por não vacinação do rebanho (AUTOS DE INFRAÇÃO):
-1° semestre:
-        Planejado: 0
-        Executado: 7
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Infração por não comunicação da vacina (AUTOS DE INFRAÇÃO):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Autos emitidos por não declaração durante a campanha (AUTOS DE INFRAÇÃO):
-1° semestre:
-        Planejado: 0
-        Executado: 276
-
-2° semestre:
-        Planejado: 0
-        Executado: 10
-----------------------------------------------------------------------------------------------------------
-
-Número de Revendas Agropecuárias CREDENCIADAS (INSUMOS  VETERINÁRIOS):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Total de doses de vacinas APREENDIDAS (INSUMOS  VETERINÁRIOS):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Total de Doses de vacinas  DESTRUÍDAS (INSUMOS  VETERINÁRIOS):
-1° semestre:
-        Planejado: 0
-        Executado: 0
-
-2° semestre:
-        Planejado: 0
-        Executado: 0
-
-Doses de vacinas COMERCIALIZADAS (INSUMOS  VETERINÁRIOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 20.755
-
-2° semestre:
-        Planejado: N/A
-        Executado: 14.924
-----------------------------------------------------------------------------------------------------------
-
-GERÊNCIA DE FISCALIZAÇÃO DE AGROTÓXICOS (GFA)
-
-Cadastro inicial de Agrotóxicos (CADASTRO DE AGROTÓXICOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 76
-2° semestre:
-        Planejado: N/A
-        Executado: 89
-
-Renovação de Cadastro de Agrotóxicos (n.°) (*) (CADASTRO DE AGROTÓXICOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 371
-2° semestre:
-        Planejado: N/A
-        Executado: 460
-
-Alteração de Cadastro de Agrotóxicos  (*) (CADASTRO DE AGROTÓXICOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 234
-2° semestre:
-        Planejado: N/A
-        Executado: 208
-
-Cancelamento de Cadastro de agrotóxicos (CADASTRO DE AGROTÓXICOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 13
-2° semestre:
-        Planejado: N/A
-        Executado: 31
-
-Agrotóxicos, seus componentes e afins cadastrados na ADAF (n° total atualizado) (CADASTRO DE AGROTÓXICOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 5.971
-2° semestre:
-        Planejado: N/A
-        Executado: 6.386
-----------------------------------------------------------------------------------------------------------
-
-Fiscalização em Revendas, Prestadoras de Serviços Manipuladores de Agrotóxicos, Postos  ou Centrais de Recebimento de Embalagens Vazias ou com Resíduos de Agrotóxicos – com e sem registro (nº de fiscalizações – com repetição/nº de estabelecimentos fiscalizados – sem repetição). (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 12
-2° semestre:
-        Planejado: N/A
-        Executado: 22
-
-Orientação em Revendas, Prestadoras de Serviços, Postos  ou Centrais de Recebimento de Embalagens Vazias ou com Resíduos de Agrotóxicos – com e sem registro (nº de orientações – com repetição/nº de estabelecimentos orientados – sem repetição). (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 12
-2° semestre:
-        Planejado: N/A
-        Executado: 22
-
-Fiscalização em Propriedades Rurais (uso, armazenamento, destino final de embalagens vazias, com resíduos e/ou agrotóxicos vencidos ou obsoletos)  (n° de fiscalizações – com repetição/n° de propriedades fiscalizadas – sem repetição). (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 18
-2° semestre:
-        Planejado: N/A
-        Executado: 47
-
-Orientação em Propriedades Rurais (uso, armazenamento, destino final de embalagens vazias, com resíduos e/ou agrotóxicos vencidos ou obsoletos)  (n° de orientações – com repetição/n° de propriedades orientadas – sem repetição). (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 18
-2° semestre:
-        Planejado: N/A
-        Executado: 50
-
-Notificação (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 153
-2° semestre:
-        Planejado: N/A
-        Executado: 26
-
-Agrotóxicos fiscalizados (L) (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 252,50 (L)
-2° semestre:
-        Planejado: N/A
-        Executado: 26.352,19 (L)
-
-Agrotóxicos fiscalizados (Kg) (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 16 (KG)
-2° semestre:
-        Planejado: N/A
-        Executado: 22.578,80 (KG)
-
-Agrotóxicos apreendidos (L) (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 138 (L)
-2° semestre:
-        Planejado: N/A
-        Executado: 39,25 (L)
-
-Agrotóxicos liberados (L) (FISCALIZAÇÕES E ORIENTAÇÕES):
-1° semestre:
-        Planejado: N/A
-        Executado: 116 (L)
-2° semestre:
-        Planejado: N/A
-        Executado: 314 (L)
-
-Registro de Revendas de Agrotóxicos, Prestadores de Serviços Manipuladores de Agrotóxicos, e Postos ou Centrais de Recebimento de Embalagens Vazias ou com Resíduos de Agrotóxicos (guia paga) (REGISTRO DE ESTABELECIMENTOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 2
-2° semestre:
-        Planejado: N/A
-        Executado: 0
-
-Renovação de Registro de Revendas de Agrotóxicos, Prestadores de Serviços Manipuladores de Agrotóxicos, e Postos ou Centrais de Recebimento de Embalagens Vazias ou com Resíduos de Agrotóxicos (guia paga) (REGISTRO DE ESTABELECIMENTOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 7
-2° semestre:
-        Planejado: N/A
-        Executado: 6
-
-Cancelamento de Registro de Revendas de Agrotóxicos, Prestadoras de Serviço Manipuladores de Agrotóxicos e Postos ou Centrais de Recebimento de Embalagens Vazias ou com Resíduos de Agrotóxicos – condicionada à uma Nota Técnica (REGISTRO DE ESTABELECIMENTOS):
-1° semestre:
-        Planejado: N/A
-        Executado: 1
-2° semestre:
-        Planejado: N/A
-        Executado: 0
-`;
-
-    // ============================
-    // Utils
-    // ============================
     const $ = (s) => document.querySelector(s);
-    const fmt = (n) => new Intl.NumberFormat("pt-BR").format(n);
-    const tooltip = $("#tooltip");
-
-    function parseBRNumber(v){
-      if (v == null) return null;
-      const s0 = String(v).trim();
-      if (!s0) return null;
-      if (/^(N\/A|NA|n\/a)$/i.test(s0)) return null;
-
-      // remove unidades entre parênteses do valor
-      let s = s0.replace(/\(.*?\)/g, " ").trim();
-      s = s.replace(/[^\d,.\-]/g, "");
-      if (!s) return null;
-
-      if (s.includes(",")){
-        s = s.replace(/\./g, "").replace(",", ".");
-      } else {
-        s = s.replace(/\./g, "");
-      }
-      const n = Number(s);
-      return Number.isFinite(n) ? n : null;
-    }
-
-    function splitIndicatorProgram(line, manager){
-      const s = line.replace(/:\s*$/, "").trim();
-      const lastOpen = s.lastIndexOf("(");
-      const lastClose = s.lastIndexOf(")");
-
-      if (lastOpen < 0 || lastClose < lastOpen){
-        return { program: manager ? manager : "GERAL", indicator: s };
-      }
-
-      const program = s.slice(lastOpen + 1, lastClose).trim();
-      const indicator = s.slice(0, lastOpen).trim();
-      const programKey = manager ? `${manager} — ${program}` : program;
-      return { program: programKey, indicator };
-    }
-
-    function parseReport(raw){
-      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-
-      let manager = null;
-      let current = null;
-      let currentSem = null;
-
-      const out = [];
-
-      for (const line of lines){
-        const m = line.match(/^GERÊNCIA\s+DE\s+.+\(([^)]+)\)\s*$/i);
-        if (m){
-          manager = m[1].trim();
-          current = null;
-          currentSem = null;
-          continue;
-        }
-
-        if (/^-{6,}$/.test(line)) continue;
-
-        const sem = line.match(/^([12])\s*[º°]\s*semestre\s*:/i);
-        if (sem){
-          currentSem = sem[1] === "1" ? "1S" : "2S";
-          continue;
-        }
-
-        if (/:$/.test(line) && !/^Planejado:/i.test(line) && !/^Executado:/i.test(line)){
-          current = splitIndicatorProgram(line, manager);
-          continue;
-        }
-
-        if (current && currentSem){
-          const p = line.match(/^Planejado\s*:\s*(.+)$/i);
-          if (p){
-            out.push({ ...current, semestre: currentSem, planned: parseBRNumber(p[1]), executed: 0 });
-            continue;
-          }
-
-          const e = line.match(/^Executado\s*:\s*(.+)$/i);
-          if (e){
-            const v = parseBRNumber(e[1]) ?? 0;
-
-            // aplica no último item compatível; se não existir, cria
-            let applied = false;
-            for (let i = out.length - 1; i >= 0; i--){
-              const it = out[i];
-              if (it.program === current.program && it.indicator === current.indicator && it.semestre === currentSem){
-                it.executed = v;
-                applied = true;
-                break;
-              }
-            }
-            if (!applied){
-              out.push({ ...current, semestre: currentSem, planned: null, executed: v });
-            }
-            continue;
-          }
-        }
-      }
-
-      // normaliza duplicatas (se seu texto repetir um item, NÃO soma — mantém o maior)
-      const map = new Map();
-      for (const r of out){
-        const key = `${r.program}||${r.indicator}||${r.semestre}`;
-        if (!map.has(key)){
-          map.set(key, { ...r });
-        } else {
-          const prev = map.get(key);
-          prev.executed = Math.max(prev.executed ?? 0, r.executed ?? 0);
-          const p1 = prev.planned;
-          const p2 = r.planned;
-          if (p2 != null && (p1 == null || p2 > p1)) prev.planned = p2;
-        }
-      }
-      return [...map.values()];
-    }
-
-    const DATA = parseReport(RAW_TEXT);
-
-    // ============================
-    // UI init
-    // ============================
-    const programSel = $("#program");
-    const indicatorSel = $("#indicator");
+    const deptSel = $("#dept");
+    const groupSel = $("#group");
+    const indSel = $("#indicator");
     const tbody = $("#tbody");
+    const svg = $("#chart");
+    const tip = $("#tooltip");
 
-    const programs = [...new Set(DATA.map(d => d.program))].sort((a,b)=>a.localeCompare(b));
-    programs.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p;
-      opt.textContent = p;
-      programSel.appendChild(opt);
+    function formatBR(n){
+      const isInt = Math.abs(n - Math.round(n)) < 1e-9;
+      return new Intl.NumberFormat("pt-BR", {
+        maximumFractionDigits: isInt ? 0 : 2,
+        minimumFractionDigits: isInt ? 0 : 2
+      }).format(n);
+    }
+
+    function pct(exec, plan){
+      if (!plan || plan === 0) return null;
+      return (exec / plan) * 100;
+    }
+
+    // Populate selects
+    const depts = [...new Set(MOCK_DATA.map(d => d.dept))].sort((a,b)=>a.localeCompare(b));
+    depts.forEach(d => addOpt(deptSel, d, d));
+
+    deptSel.addEventListener("change", () => {
+      fillGroups(deptSel.value);
+      fillIndicators(deptSel.value, groupSel.value);
+      render(deptSel.value, groupSel.value, indSel.value);
     });
 
-    programSel.addEventListener("change", () => {
-      fillIndicators(programSel.value);
-      render(programSel.value, indicatorSel.value);
+    groupSel.addEventListener("change", () => {
+      fillIndicators(deptSel.value, groupSel.value);
+      render(deptSel.value, groupSel.value, indSel.value);
     });
-    indicatorSel.addEventListener("change", () => render(programSel.value, indicatorSel.value));
 
-    fillIndicators(programs[0]);
-    render(programs[0], indicatorSel.value);
+    indSel.addEventListener("change", () => {
+      render(deptSel.value, groupSel.value, indSel.value);
+    });
 
-    function fillIndicators(program){
-      indicatorSel.innerHTML = "";
-      const inds = [...new Set(DATA.filter(d => d.program === program).map(d => d.indicator))]
+    // Init
+    fillGroups(depts[0]);
+    fillIndicators(depts[0], groupSel.value);
+    render(depts[0], groupSel.value, indSel.value);
+
+    function addOpt(sel, value, text){
+      const o = document.createElement("option");
+      o.value = value;
+      o.textContent = text;
+      sel.appendChild(o);
+    }
+
+    function fillGroups(dept){
+      groupSel.innerHTML = "";
+      const groups = [...new Set(MOCK_DATA.filter(d=>d.dept===dept).map(d=>d.group))].sort((a,b)=>a.localeCompare(b));
+      groups.forEach(g => addOpt(groupSel, g, g));
+    }
+
+    function fillIndicators(dept, group){
+      indSel.innerHTML = "";
+      const inds = [...new Set(MOCK_DATA.filter(d=>d.dept===dept && d.group===group).map(d=>d.indicator))]
         .sort((a,b)=>a.localeCompare(b));
-      inds.forEach(i => {
-        const opt = document.createElement("option");
-        opt.value = i;
-        opt.textContent = i;
-        indicatorSel.appendChild(opt);
-      });
+      inds.forEach(i => addOpt(indSel, i, i));
     }
 
-    // ============================
-    // Escolha automática do melhor gráfico
-    // ============================
-    function chooseChartType(rows){
-      const plannedVals = rows.map(r => (typeof r.planned === "number" ? r.planned : null));
-      const hasPlannedPos = plannedVals.some(v => v !== null && v > 0);
-      const hasPlannedZero = plannedVals.some(v => v !== null && v === 0);
+    function render(dept, group, indicator){
+      const item = MOCK_DATA.find(d => d.dept===dept && d.group===group && d.indicator===indicator);
+      if (!item) return;
 
-      const r1 = rows.find(r => r.semestre === "1S");
-      const r2 = rows.find(r => r.semestre === "2S");
-      const e1 = r1?.executed ?? 0;
-      const e2 = r2?.executed ?? 0;
-      const execSum = (e1 ?? 0) + (e2 ?? 0);
+      $("#title").textContent = `${dept} — ${group} — ${indicator}`;
+      $("#unitLabel").textContent = item.unit ? `Unidade: ${item.unit}` : "";
 
-      if (hasPlannedPos) return "BAR_COMPARE";       // planejado relevante
-      if (hasPlannedZero) return "BAR_EXEC_ONLY";    // planejado = 0 -> mostra só executado
-      if (execSum > 0) return "PIE_EXEC_SEMESTER";   // planejado N/A -> pizza por semestre
-      return "BAR_EXEC_ONLY";
-    }
+      const pAll = pct(item.s1.executed + item.s2.executed, item.s1.planned + item.s2.planned);
+      $("#kpiInfo").textContent = `Cumprimento (ano): ${pAll === null ? "—" : pAll.toFixed(1) + "%"}`;
 
-    // ============================
-    // Render
-    // ============================
-    function render(program, indicator){
-      const rows = DATA
-        .filter(d => d.program === program && d.indicator === indicator)
-        .sort((a,b)=>a.semestre.localeCompare(b.semestre)); // 1S,2S
-
-      $("#chartTitle").textContent = `${program} — ${indicator}`;
-
-      // table
+      // Table
       tbody.innerHTML = "";
-      ["1S","2S"].forEach(s => {
-        const r = rows.find(x => x.semestre === s) || { planned:null, executed:0 };
+      const rows = [
+        { sem:"1º semestre", s:item.s1 },
+        { sem:"2º semestre", s:item.s2 },
+      ];
+      rows.forEach(r => {
+        const plan = r.s.planned;
+        const exec = r.s.executed;
+        const pc = pct(exec, plan);
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${s === "1S" ? "1º semestre" : "2º semestre"}</td>
-          <td class="mono">${r.planned === null || r.planned === undefined ? "N/A" : fmt(r.planned)}</td>
-          <td class="mono">${fmt(r.executed ?? 0)}</td>
+          <td>${r.sem}</td>
+          <td class="mono">${formatBR(plan)}</td>
+          <td class="mono">${formatBR(exec)}</td>
+          <td class="mono">${pc === null ? "—" : pc.toFixed(1) + "%"}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      const chartType = chooseChartType(rows);
-      const legend = $("#legend");
-      const svg = $("#chart");
+      $("#foot").textContent = "Fonte: data.js (MOCK_DATA).";
 
-      if (chartType === "BAR_COMPARE"){
-        $("#modePill").textContent = "Modo: Barra (Planejado x Executado)";
-        legend.innerHTML = `
-          <div class="key"><span class="sw"></span> Planejado</div>
-          <div class="key"><span class="sw b"></span> Executado</div>
-        `;
-        drawBarCompare(svg, rows);
-        return;
-      }
-
-      if (chartType === "PIE_EXEC_SEMESTER"){
-        $("#modePill").textContent = "Modo: Pizza (Executado 1º vs 2º semestre)";
-        legend.innerHTML = `
-          <div class="key"><span class="sw"></span> 1º semestre</div>
-          <div class="key"><span class="sw b"></span> 2º semestre</div>
-        `;
-        drawPieSemester(svg, rows);
-        return;
-      }
-
-      $("#modePill").textContent = "Modo: Barra (Executado)";
-      legend.innerHTML = `<div class="key"><span class="sw c"></span> Executado</div>`;
-      drawBarExecOnly(svg, rows);
+      drawChart(item);
     }
 
-    // ============================
-    // Barra: Planejado x Executado (2 semestres)
-    // ============================
-    function drawBarCompare(svg, rows){
-      const W = 920, H = 360;
-      const pad = { top: 18, right: 18, bottom: 54, left: 64 };
+    function drawChart(item){
+      const W = 980, H = 360;
+      const pad = { top: 18, right: 18, bottom: 60, left: 78 };
       const innerW = W - pad.left - pad.right;
       const innerH = H - pad.top - pad.bottom;
 
-      const r1 = rows.find(r => r.semestre === "1S") || { semestre:"1S", planned:null, executed:0 };
-      const r2 = rows.find(r => r.semestre === "2S") || { semestre:"2S", planned:null, executed:0 };
-      const data = [r1, r2];
-
-      const values = [];
-      data.forEach(r => {
-        if (typeof r.planned === "number") values.push(r.planned);
-        values.push(r.executed ?? 0);
-      });
-
-      const maxV = Math.max(1, ...values);
-      const yMax = Math.ceil(maxV * 1.12);
-
-      const xGroup = (i) => pad.left + i * (innerW / 2) + 18;
-      const groupW = (innerW / 2) - 36;
-
-      const y = (v) => pad.top + (1 - (v / yMax)) * innerH;
-      const h = (v) => (v / yMax) * innerH;
-
-      const ticks = 5;
-      const tickVals = Array.from({length: ticks+1}, (_,k)=> (k*yMax)/ticks);
-
-      svg.innerHTML = "";
-
-      tickVals.forEach(tv=>{
-        const yy = y(tv);
-        svg.appendChild(el("line", { x1: pad.left, y1: yy, x2: W-pad.right, y2: yy, class:"gridline" }));
-        const t = el("text", { x: pad.left-10, y: yy+4, "text-anchor":"end", class:"axis" });
-        t.textContent = fmt(Math.round(tv));
-        svg.appendChild(t);
-      });
-
-      ["1º semestre","2º semestre"].forEach((lab,i)=>{
-        const tx = el("text", { x: xGroup(i)+groupW/2, y: H-22, "text-anchor":"middle", class:"axis" });
-        tx.textContent = lab;
-        svg.appendChild(tx);
-      });
-
-      data.forEach((r,i)=>{
-        const gx = xGroup(i);
-        const barW = (groupW - 14) / 2;
-
-        const pv = (typeof r.planned === "number" ? r.planned : 0);
-        const ev = (r.executed ?? 0);
-
-        svg.appendChild(rectWithTooltip(gx, y(pv), barW, h(pv), "barA", r, "Planejado", pv));
-        svg.appendChild(rectWithTooltip(gx + barW + 14, y(ev), barW, h(ev), "barB", r, "Executado", ev));
-
-        svg.appendChild(barLabel(gx + barW/2, y(pv)-6, pv));
-        svg.appendChild(barLabel(gx + barW + 14 + barW/2, y(ev)-6, ev));
-      });
-    }
-
-    // ============================
-    // Barra: Executado apenas (2 semestres)
-    // ============================
-    function drawBarExecOnly(svg, rows){
-      const W = 920, H = 360;
-      const pad = { top: 18, right: 18, bottom: 54, left: 64 };
-      const innerW = W - pad.left - pad.right;
-      const innerH = H - pad.top - pad.bottom;
-
-      const r1 = rows.find(r => r.semestre === "1S") || { semestre:"1S", planned:null, executed:0 };
-      const r2 = rows.find(r => r.semestre === "2S") || { semestre:"2S", planned:null, executed:0 };
-      const data = [r1, r2];
-
-      const values = data.map(r => r.executed ?? 0);
-      const maxV = Math.max(1, ...values);
-      const yMax = Math.ceil(maxV * 1.12);
-
-      const xGroup = (i) => pad.left + i * (innerW / 2) + 18;
-      const groupW = (innerW / 2) - 36;
-
-      const y = (v) => pad.top + (1 - (v / yMax)) * innerH;
-      const h = (v) => (v / yMax) * innerH;
-
-      const ticks = 5;
-      const tickVals = Array.from({length: ticks+1}, (_,k)=> (k*yMax)/ticks);
-
-      svg.innerHTML = "";
-
-      tickVals.forEach(tv=>{
-        const yy = y(tv);
-        svg.appendChild(el("line", { x1: pad.left, y1: yy, x2: W-pad.right, y2: yy, class:"gridline" }));
-        const t = el("text", { x: pad.left-10, y: yy+4, "text-anchor":"end", class:"axis" });
-        t.textContent = fmt(Math.round(tv));
-        svg.appendChild(t);
-      });
-
-      ["1º semestre","2º semestre"].forEach((lab,i)=>{
-        const tx = el("text", { x: xGroup(i)+groupW/2, y: H-22, "text-anchor":"middle", class:"axis" });
-        tx.textContent = lab;
-        svg.appendChild(tx);
-      });
-
-      data.forEach((r,i)=>{
-        const gx = xGroup(i);
-        const ev = (r.executed ?? 0);
-        const barW = groupW * 0.55;
-        const bx = gx + (groupW - barW)/2;
-
-        svg.appendChild(rectWithTooltip(bx, y(ev), barW, h(ev), "barC", r, "Executado", ev));
-        svg.appendChild(barLabel(bx + barW/2, y(ev)-6, ev));
-      });
-    }
-
-    // ============================
-    // Pizza/Donut: Executado 1S vs 2S
-    // ============================
-    function drawPieSemester(svg, rows){
-      const r1 = rows.find(r => r.semestre === "1S") || { semestre:"1S", planned:null, executed:0 };
-      const r2 = rows.find(r => r.semestre === "2S") || { semestre:"2S", planned:null, executed:0 };
-
-      const v1 = r1.executed ?? 0;
-      const v2 = r2.executed ?? 0;
-      const total = (v1 + v2) || 1;
-
-      const cx = 460, cy = 170;
-      const R  = 110;
-      const rr = 62;
-
-      svg.innerHTML = "";
-
-      let start = -90;
-      const slices = [
-        { label:"1º semestre", value:v1, cls:"sliceA", row:r1 },
-        { label:"2º semestre", value:v2, cls:"sliceB", row:r2 },
+      const data = [
+        { label:"1º semestre", planned:item.s1.planned, executed:item.s1.executed },
+        { label:"2º semestre", planned:item.s2.planned, executed:item.s2.executed },
       ];
 
-      slices.forEach(s=>{
-        const ang = (s.value / total) * 360;
-        const end = start + ang;
-        const path = donutSlice(cx, cy, R, rr, start, end);
-        path.setAttribute("class", `${s.cls} sliceStroke`);
-        path.setAttribute("tabindex", "0");
+      const maxV = Math.max(1, ...data.flatMap(d => [d.planned, d.executed]));
+      const yMax = Math.ceil(maxV * 1.12);
 
-        const percent = Math.round((s.value / total) * 100);
+      const y = (v) => pad.top + (1 - (v / yMax)) * innerH;
+      const hh = (v) => (v / yMax) * innerH;
 
-        const show = (clientX, clientY) => {
-          tooltip.style.left = clientX + "px";
-          tooltip.style.top = clientY + "px";
-          tooltip.style.opacity = "1";
-          tooltip.innerHTML = `
-            <div class="t-title">${s.label}</div>
-            <div class="t-row"><span>Executado</span><b>${fmt(s.value)} (${percent}%)</b></div>
-            <div class="t-row"><span>Planejado</span><b>${(s.row.planned == null ? "N/A" : fmt(s.row.planned))}</b></div>
-          `;
-        };
+      const groupW = innerW / 2;
+      const barGap = 16;
+      const barW = Math.min(170, (groupW - 2*barGap) / 2);
+      const gx = (i) => pad.left + i*groupW + (groupW - (2*barW + barGap))/2;
 
-        path.addEventListener("mousemove", (e)=>show(e.clientX, e.clientY));
-        path.addEventListener("mouseleave", ()=>tooltip.style.opacity="0");
-        path.addEventListener("focus", ()=>show(window.innerWidth/2, 120));
-        path.addEventListener("blur", ()=>tooltip.style.opacity="0");
+      const ticks = 5;
+      const tickVals = Array.from({length: ticks+1}, (_,k) => (k*yMax)/ticks);
 
-        svg.appendChild(path);
+      svg.innerHTML = "";
 
-        if (s.value > 0){
-          const mid = (start + end) / 2;
-          const p = polar(cx, cy, R + 28, mid);
-          const t = el("text", { x: p.x, y: p.y, "text-anchor":"middle", class:"axis" });
-          t.textContent = `${percent}%`;
-          svg.appendChild(t);
-        }
-
-        start = end;
+      // gridlines + y labels
+      tickVals.forEach(tv => {
+        const yy = y(tv);
+        svg.appendChild(el("line", { x1: pad.left, y1: yy, x2: W-pad.right, y2: yy, class:"gridline" }));
+        const t = el("text", { x: pad.left-10, y: yy+4, "text-anchor":"end", class:"axis" });
+        t.textContent = formatBR(tv);
+        svg.appendChild(t);
       });
 
-      svg.appendChild(el("circle", { cx, cy, r: rr, fill: "white" }));
-      const t1 = el("text", { x: cx, y: cy+6, "text-anchor":"middle", class:"axis" });
-      t1.textContent = fmt(v1 + v2);
-      svg.appendChild(t1);
-      const t2 = el("text", { x: cx, y: cy+28, "text-anchor":"middle", class:"axis" });
-      t2.textContent = "Total executado";
-      svg.appendChild(t2);
+      // x labels
+      data.forEach((d,i) => {
+        const cx = gx(i) + (2*barW + barGap)/2;
+        const tx = el("text", { x: cx, y: H-26, "text-anchor":"middle", class:"axis" });
+        tx.textContent = d.label;
+        svg.appendChild(tx);
+      });
+
+      // bars + labels + tooltip
+      data.forEach((d,i) => {
+        const x0 = gx(i);
+
+        const pRect = rectWithTip(x0, y(d.planned), barW, hh(d.planned), "barPlanned", d, item, "Planejado", d.planned);
+        svg.appendChild(pRect);
+        svg.appendChild(valueLabel(x0 + barW/2, y(d.planned)-7, d.planned));
+
+        const ex = x0 + barW + barGap;
+        const eRect = rectWithTip(ex, y(d.executed), barW, hh(d.executed), "barExecuted", d, item, "Executado", d.executed);
+        svg.appendChild(eRect);
+        svg.appendChild(valueLabel(ex + barW/2, y(d.executed)-7, d.executed));
+      });
     }
 
-    // ============================
-    // Helpers SVG
-    // ============================
-    function barLabel(cx, cy, v){
-      const t = el("text", { x: cx, y: Math.max(14, cy), "text-anchor":"middle", class:"axis" });
-      t.textContent = fmt(v);
+    function valueLabel(x, y, v){
+      const t = el("text", { x, y: Math.max(14, y), "text-anchor":"middle", class:"label" });
+      t.textContent = formatBR(v);
       return t;
     }
 
-    function rectWithTooltip(x,y,w,h,cls,row,label,val){
-      const r = el("rect", { x, y, width:w, height: Math.max(0,h), rx:10, class:cls, tabindex:0 });
+    function rectWithTip(x,y,w,h,cls,semRow,item,kind,value){
+      const r = el("rect", { x, y, width:w, height: Math.max(0,h), rx: 10, class: cls, tabindex: 0 });
 
-      const sem = row.semestre === "1S" ? "1º semestre" : "2º semestre";
-      const plannedTxt = (row.planned === null || row.planned === undefined) ? "N/A" : fmt(row.planned);
+      const plannedTxt = formatBR(semRow.planned);
+      const executedTxt = formatBR(semRow.executed);
+      const unitTxt = item.unit ? ` ${item.unit}` : "";
+      const pc = (semRow.planned && semRow.planned !== 0) ? (semRow.executed/semRow.planned*100) : null;
 
       const show = (clientX, clientY) => {
-        tooltip.style.left = clientX + "px";
-        tooltip.style.top = clientY + "px";
-        tooltip.style.opacity = "1";
-        tooltip.innerHTML = `
-          <div class="t-title">${sem}</div>
-          <div class="t-row"><span>${label}</span><b>${fmt(val)}</b></div>
-          <div class="t-row"><span>Planejado</span><b>${plannedTxt}</b></div>
-          <div class="t-row"><span>Executado</span><b>${fmt(row.executed ?? 0)}</b></div>
+        tip.style.left = clientX + "px";
+        tip.style.top = clientY + "px";
+        tip.style.opacity = "1";
+        tip.innerHTML = `
+          <div class="t-title">${semRow.label}</div>
+          <div class="t-row"><span>Gerência</span><b>${item.dept}</b></div>
+          <div class="t-row"><span>Grupo</span><b>${item.group}</b></div>
+          <div class="t-row"><span>Indicador</span><b>${item.indicator}</b></div>
+          <div class="t-row"><span>Planejado</span><b>${plannedTxt}${unitTxt}</b></div>
+          <div class="t-row"><span>Executado</span><b>${executedTxt}${unitTxt}</b></div>
+          <div class="t-row"><span>Cumprimento</span><b>${pc===null ? "—" : pc.toFixed(1) + "%"}</b></div>
         `;
       };
 
       r.addEventListener("mousemove", (e)=>show(e.clientX, e.clientY));
-      r.addEventListener("mouseleave", ()=>tooltip.style.opacity="0");
-      r.addEventListener("focus", ()=>show(window.innerWidth/2, 120));
-      r.addEventListener("blur", ()=>tooltip.style.opacity="0");
+      r.addEventListener("mouseleave", ()=> tip.style.opacity="0");
+      r.addEventListener("focus", ()=> show(window.innerWidth/2, 130));
+      r.addEventListener("blur", ()=> tip.style.opacity="0");
 
       return r;
     }
 
-    function donutSlice(cx, cy, R, r, startAngle, endAngle){
-      const large = (endAngle - startAngle) > 180 ? 1 : 0;
-      const p1 = polar(cx, cy, R, endAngle);
-      const p2 = polar(cx, cy, R, startAngle);
-      const p3 = polar(cx, cy, r, startAngle);
-      const p4 = polar(cx, cy, r, endAngle);
-
-      const d = [
-        `M ${p2.x} ${p2.y}`,
-        `A ${R} ${R} 0 ${large} 1 ${p1.x} ${p1.y}`,
-        `L ${p4.x} ${p4.y}`,
-        `A ${r} ${r} 0 ${large} 0 ${p3.x} ${p3.y}`,
-        "Z"
-      ].join(" ");
-      return el("path", { d });
-    }
-
-    function polar(cx, cy, r, angleDeg){
-      const a = (angleDeg * Math.PI) / 180;
-      return { x: cx + (r * Math.cos(a)), y: cy + (r * Math.sin(a)) };
-    }
-
     function el(tag, attrs){
       const n = document.createElementNS("http://www.w3.org/2000/svg", tag);
-      Object.entries(attrs).forEach(([k,v])=> n.setAttribute(k, String(v)));
+      Object.entries(attrs).forEach(([k,v]) => n.setAttribute(k, String(v)));
       return n;
     }
-
-    // ===== sanity log =====
-    console.log("Itens parseados:", DATA.length);
   </script>
 </body>
 </html>
