@@ -353,3 +353,44 @@ const MOCK_DATA = [
   { dept:"GDV", group:"VIGIFITO BVAS VOLANTES", indicator:"16.5 Liberação (T)", unit:"t",
     s1:{ planned:13015.00, executed:12050.9 }, s2:{ planned:0, executed:0 } },
 ];
+// Ranking — Municípios Produtores do Amazonas (IDAM 2024/2025)
+// Produção estimada em toneladas (t)
+
+const MUNICIPIOS_PRODUTORES_AM_2024_2025 = [
+  { rank: 1, municipio: "Humaitá", calhaRio: "Madeira", producaoEstimada_t: 23999.50 },
+  { rank: 2, municipio: "Lábrea/Vila Extrema", calhaRio: "Purus", producaoEstimada_t: 15694.74 },
+  { rank: 3, municipio: "Canutama", calhaRio: "Purus", producaoEstimada_t: 13913.82 },
+  { rank: 4, municipio: "Boca do Acre", calhaRio: "Purus", producaoEstimada_t: 4590.00 },
+  { rank: 5, municipio: "Guajará", calhaRio: "Juruá", producaoEstimada_t: 900.00 },
+];
+// =========================
+// Bloco adicional — Gestão Corporativa (ADAF)
+// Para gráficos no site (cards + barras simples)
+// =========================
+
+const ADAF_GESTAO_CORPORATIVA_2024 = {
+  recursosHumanos: {
+    anoReferencia: 2024,
+    categorias: [
+      { categoria: "Servidores (comissionados + efetivos)", quantidade: 281 },
+      { categoria: "Colaboradores (apoio administrativo)", quantidade: 39 },
+      { categoria: "Estagiários", quantidade: 76 },
+    ],
+    totalProfissionais: 396,
+  },
+
+  balancoOrcamentario: {
+    anoReferencia: 2024,
+    ldoEstimativaReceitaDespesa: 62680000.00,   // R$ 62.680.000,00
+    orcamentoInicialAposAjustes: 56757893.28,   // R$ 56.757.893,28
+    variacaoAbsoluta: -5912106.72,              // diferença
+    variacaoPercentual: -9.43,                  // (%)
+    observacao: "Alteração por créditos adicionais e anulações.",
+  },
+
+  balancoFinanceiro: {
+    dataApuracao: "2024-12-31",
+    superavitFinanceiro: 2195825.22,            // R$ 2.195.825,22
+    observacao: "Coincide com Caixa e Equivalentes de Caixa do Balanço Patrimonial.",
+  },
+};
