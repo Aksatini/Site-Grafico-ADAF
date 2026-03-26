@@ -380,17 +380,17 @@ const ADAF_GESTAO_CORPORATIVA_2024 = {
   },
 
   balancoOrcamentario: {
-    anoReferencia: 2024,
-    ldoEstimativaReceitaDespesa: 62680000.00,   // R$ 62.680.000,00
-    orcamentoInicialAposAjustes: 56757893.28,   // R$ 56.757.893,28
-    variacaoAbsoluta: -5912106.72,              // diferença
-    variacaoPercentual: -9.43,                  // (%)
+    anoReferencia: 2025,
+    ldoEstimativaReceitaDespesa: 62466000.00,   // R$ 62.680.000,00
+    orcamentoInicialAposAjustes: 60993096.92,   // R$ 56.757.893,28
+    variacaoAbsoluta: -1472903.08,
+    variacaoPercentual: -2.36,               // (%)
     observacao: "Alteração por créditos adicionais e anulações.",
   },
 
   balancoFinanceiro: {
-    dataApuracao: "2024-12-31",
-    superavitFinanceiro: 2195825.22,            // R$ 2.195.825,22
+    dataApuracao: "2025-12-31",
+    superavitFinanceiro: 2578991.00,            // R$ 2.195.825,22
     observacao: "Coincide com Caixa e Equivalentes de Caixa do Balanço Patrimonial.",
   },
 };
